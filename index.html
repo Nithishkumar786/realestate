@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Properties Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .admin-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .admin-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(102,126,234,0.8), rgba(118,75,162,0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23f8f9fa" width="1200" height="600"/><path fill="%23e9ecef" d="M0 300Q200 200 400 300T800 300Q1000 200 1200 300V600H0z"/></svg>');
+            padding: 120px 0 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        /* Clients Section */
+        .clients-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
+            overflow: hidden;
+        }
+
+        .clients-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: #495057;
+        }
+
+        .clients-marquee {
+            display: flex;
+            animation: scroll 25s linear infinite;
+            width: max-content;
+        }
+
+        .clients-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        .client-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0 3rem;
+            padding: 1rem 0;
+            white-space: nowrap;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .client-logo:hover {
+            opacity: 1;
+        }
+
+        /* Properties Section */
+        .properties {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+
+        .properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .property-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .property-info {
+            padding: 1.5rem;
+        }
+
+        .property-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .property-location {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .properties-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .clients-marquee {
+                animation-duration: 35s;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🏠 Prime Properties</div>
+                <button class="admin-btn" id="adminBtn">Post Property (Owner Only)</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Premium Real Estate Portfolio</h1>
+            <p>Discover exceptional properties curated for discerning investors and homeowners</p>
+        </div>
+    </section>
+
+    <section class="clients-section">
+        <div class="container">
+            <h2 class="clients-title">Trusted by Leading Brands</h2>
+            <div class="clients-marquee">
+                <div class="client-logo">HDFC Bank</div>
+                <div class="client-logo">ICICI Prudential</div>
+                <div class="client-logo">Godrej Properties</div>
+                <div class="client-logo">Sobha Developers</div>
+                <div class="client-logo">Prestige Group</div>
+                <div class="client-logo">DLF Limited</div>
+                <div class="client-logo">HDFC Bank</div>
+                <div class="client-logo">ICICI Prudential</div>
+                <div class="client-logo">Godrej Properties</div>
+                <div class="client-logo">Sobha Developers</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="properties" id="propertiesSection">
+        <div class="container">
+            <h2 class="section-title">Featured Properties</h2>
+            <div class="properties-grid" id="propertiesGrid">
+                <!-- Properties will be dynamically added here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Auth Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Owner Authentication</h3>
+                <button class="close-btn" id="closeAuth">&times;</button>
+            </div>
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="authCode">Enter Secret Code:</label>
+                    <input type="password" id="authCode" placeholder="Owner access code" required>
+                </div>
+                <button type="submit" class="btn">Authenticate</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Form Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Property</h3>
+                <button class="close-btn" id="closeAdmin">&times;</button>
+            </div>
+            <form id="propertyForm">
+                <div class="form-group">
+                    <label for="propertyName">Property Name:</label>
+                    <input type="text" id="propertyName" placeholder="e.g., Skyview Penthouse" required>
+                </div>
+                <div class="form-group">
+                    <label for="propertyLocation">Location:</label>
+                    <input type="text" id="propertyLocation" placeholder="e.g., Bangalore, Karnataka" required>
+                </div>
+                <div class="form-group">
+                    <label for="propertyImage">Image URL:</label>
+                    <input type="url" id="propertyImage" placeholder="https://example.com/property.jpg" required>
+                </div>
+                <button type="submit" class="btn">Add Property</button>
+                <button type="button" class="btn btn-secondary" id="logoutBtn">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Secret code (change this for production)
+        const SECRET_CODE = 'prime2025';
+        const STORAGE_KEY = 'prime_properties_list';
+        let isAdmin = false;
+
+        // Default sample properties for first load
+        let properties = [
+            {
+                name: 'Skyview Penthouse',
+                location: 'Koramangala, Bangalore',
+                image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop'
+            },
+            {
+                name: 'Lakefront Villa',
+                location: 'Hebbal Lake, Bangalore',
+                image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop'
+            },
+            {
+                name: 'Prestige Meadows',
+                location: 'Whitefield, Bangalore',
+                image: 'https://images.unsplash.com/photo-1600607688991-68d7a90c6e9f?w=800&h=600&fit=crop'
+            }
+        ];
+
+        // DOM Elements
+        const adminBtn = document.getElementById('adminBtn');
+        const authModal = document.getElementById('authModal');
+        const adminModal = document.getElementById('adminModal');
+        const propertiesGrid = document.getElementById('propertiesGrid');
+        const authForm = document.getElementById('authForm');
+        const propertyForm = document.getElementById('propertyForm');
+        const closeAuth = document.getElementById('closeAuth');
+        const closeAdmin = document.getElementById('closeAdmin');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // Load properties from localStorage (if any)
+        function loadProperties() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed)) {
+                        properties = parsed;
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored properties', e);
+                }
+            }
+        }
+
+        // Save properties to localStorage
+        function saveProperties() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
+        }
+
+        // Initialize
+        function init() {
+            loadProperties(); // load from localStorage first
+            renderProperties();
+        }
+
+        // Render properties as cards
+        function renderProperties() {
+            propertiesGrid.innerHTML = '';
+            properties.forEach((property) => {
+                const card = document.createElement('div');
+                card.className = 'property-card';
+                card.innerHTML = `
+                    <div class="property-image">
+                        <img src="${property.image}" alt="${property.name}" onerror="this.style.display='none'; this.parentNode.innerHTML='<span>${property.name}</span>';">
+                    </div>
+                    <div class="property-info">
+                        <h3 class="property-name">${property.name}</h3>
+                        <div class="property-location">📍 ${property.location}</div>
+                    </div>
+                `;
+                propertiesGrid.appendChild(card);
+            });
+        }
+
+        // Admin authentication
+        adminBtn.addEventListener('click', () => {
+            authModal.classList.add('active');
+        });
+
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const code = document.getElementById('authCode').value;
+            if (code === SECRET_CODE) {
+                isAdmin = true;
+                authModal.classList.remove('active');
+                adminModal.classList.add('active');
+            } else {
+                alert('❌ Invalid code. Access denied.');
+                document.getElementById('authCode').value = '';
+            }
+        });
+
+        // Add property
+        propertyForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newProperty = {
+                name: document.getElementById('propertyName').value,
+                location: document.getElementById('propertyLocation').value,
+                image: document.getElementById('propertyImage').value
+            };
+            
+            properties.unshift(newProperty);
+            saveProperties();      // <-- persist to localStorage
+            renderProperties();
+            
+            propertyForm.reset();
+            adminModal.classList.remove('active');
+            
+            alert('✅ Property added successfully!');
+        });
+
+        // Close modals
+        closeAuth.addEventListener('click', () => authModal.classList.remove('active'));
+        closeAdmin.addEventListener('click', () => adminModal.classList.remove('active'));
+        logoutBtn.addEventListener('click', () => {
+            isAdmin = false;
+            adminModal.classList.remove('active');
+        });
+
+        // Close modals on outside click
+        [authModal, adminModal].forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
